@@ -1,0 +1,93 @@
+<html>
+	<body>
+		<div style="display: flex;">
+			<p> Game Score : &nbsp; </p>
+			<p id="score"></p>
+		</div>
+		<canvas id="ff" width="590" height="590"></canvas>
+    </body>
+</html>
+<script type="text/javascript">
+	class SnakeGame {
+  constructor() {
+    this.canv = document.getElementById("ff");
+    this.ctx = this.canv.getContext("2d");
+    this.positionX = this.positionY = 10;
+    this.g1 = this.g2 = 24;
+    this.poitX = this.poitY = 15;
+    this.xv = this.yv = 0;
+    this.trail = [];
+    this.tail = 1;
+    this.score = 0;
+    document.addEventListener("keydown", this.keyPush.bind(this));
+    document.getElementById("score").innerHTML = 0;
+    setInterval(() => this.game(), 120);
+  }
+
+  game() {
+    this.positionX += this.xv;
+    this.positionY += this.yv;
+    if (this.positionX < 0) {
+      this.positionX = this.g2 - 1;
+    }
+    if (this.positionX > this.g2 - 1) {
+      this.positionX = 0;
+    }
+    if (this.positionY < 0) {
+      this.positionY = this.g2 - 1;
+    }
+    if (this.positionY > this.g2 - 1) {
+      this.positionY = 0;
+    }
+    this.ctx.fillStyle = "black";
+    this.ctx.fillRect(0, 0, this.canv.width, this.canv.height);
+
+    this.ctx.fillStyle = "blue";
+    for (let i = 0; i < this.trail.length; i++) {
+      this.ctx.fillRect(this.trail[i].x * this.g1, this.trail[i].y * this.g1, this.g1 - 2, this.g1 - 2);
+      if (this.trail[i].x == this.positionX && this.trail[i].y == this.positionY) {
+        this.tail = 3;
+      }
+    }
+    this.trail.push({
+      x: this.positionX,
+      y: this.positionY
+    });
+    while (this.trail.length > this.tail) {
+      this.trail.shift();
+    }
+
+    if (this.poitX == this.positionX && this.poitY == this.positionY) {
+      this.tail++;
+      this.score++;
+      document.getElementById("score").innerHTML = this.score;
+      this.poitX = Math.floor(Math.random() * this.g2);
+      this.poitY = Math.floor(Math.random() * this.g2);
+    }
+    this.ctx.fillStyle = "white";
+    this.ctx.fillRect(this.poitX * this.g1, this.poitY * this.g1, this.g1 - 2, this.g1 - 2);
+  }
+
+  keyPush(evt) {
+    console.log(evt);
+    switch (evt.keyCode) {
+      case 37: // left
+        this.xv = -1;
+        this.yv = 0;
+        break;
+      case 38: // up
+        this.xv = 0;
+        this.yv = -1;
+        break;
+      case 39: // right
+        this.xv = 1;
+        this.yv = 0;
+        break;
+      case 40: // down
+        this.xv = 0;
+        this.yv = 1;
+    }
+  }
+}
+new SnakeGame();
+</script>
